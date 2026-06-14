@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Alignment Calculator Pro v12</title>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;margin:0;padding:18px;color:#222;user-select:none}
+.c{max-width:1240px;margin:auto;background:#fff;padding:22px;border-radius:16px;box-shadow:0 4px 18px #0002}
+h1{text-align:center;margin:0}.sub,.cr{text-align:center;color:#555}.cr{background:#f7fbff;border:1px solid #cfe4ff;padding:10px;border-radius:10px;margin:14px 0;font-weight:bold}.cr a{color:#0b5cad;text-decoration:none}
+.s{border:1px solid #d7dce2;background:#fcfcfc;border-radius:12px;padding:15px;margin-top:15px}.t{font-weight:bold;font-size:19px;margin-bottom:8px}
+.n{background:#fff7e6;border-left:6px solid #d98c00;padding:12px;border-radius:10px;line-height:1.6}.sm{font-size:13px;color:#666;line-height:1.5}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:14px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px}
+label{font-weight:bold;display:block;margin-top:12px}input,select{width:100%;box-sizing:border-box;padding:12px;margin-top:6px;border:1px solid #c8cdd4;border-radius:9px;font-size:16px;background:white}
+button{width:100%;border:0;border-radius:9px;background:#0b5cad;color:white;padding:14px;margin-top:18px;font-size:17px;font-weight:bold;cursor:pointer}.b2{background:#555}.bp{background:#08783f}.bd{background:#9b1c1c}
+.r{display:none;margin-top:16px;background:#eef6ff;border-left:6px solid #0b5cad;border-radius:12px;padding:16px;line-height:1.8}.rg{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{background:white;border:1px solid #cfe4ff;border-radius:12px;padding:14px}.rt{font-weight:bold;font-size:18px}
+.steps{display:none;background:#f7f7f7;border-radius:10px;padding:14px;margin-top:14px;white-space:pre-wrap;line-height:1.7}.diag{background:#fff;border:1px solid #dce6f2;border-radius:12px;padding:10px}svg{width:100%;height:auto}
+.pass{background:#e8f8ee;border-left:6px solid #198754}.fail{background:#fdecec;border-left:6px solid #d33}.warn{background:#fff7e6;border-left:6px solid #d98c00}
+table{width:100%;border-collapse:collapse;margin-top:10px}td,th{border:1px solid #ddd;padding:8px;text-align:left}
+.foot{text-align:center;margin-top:18px;color:#555;font-size:13px;border-top:1px solid #ddd;padding-top:12px}
+@media(max-width:900px){.g,.g3,.g4,.rg{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="c">
+<h1>Alignment Calculator Pro</h1>
+<div class="sub">Reverse Dial + Rim & Face Formula Method — Tolerance, Verification & Report Version</div>
+<div class="cr">Designed by <strong>Mamdouh Alsharari</strong> | <a href="https://www.linkedin.com/in/mamdouh-alsharari-97a9362bb" target="_blank">LinkedIn Profile</a></div>
+<div class="n"><b>Field rule:</b> Enter readings exactly as shown on dial indicators. Do not divide by 2 manually. Do not convert sag to correction value.</div>
+
+<div class="s">
+<div class="t">Job Information & Tolerance Settings</div>
+<div class="g3">
+<div><label>Equipment Tag</label><input id="equipTag"></div>
+<div><label>Technician</label><input id="technician"></div>
+<div><label>Company / Site</label><input id="site"></div>
+</div>
+<div class="g3">
+<div><label>Equipment Type</label><select id="equipType"><option>Motor</option><option>Pump</option><option>Compressor</option><option>Gas Turbine</option><option>Steam Turbine</option><option>Generator</option><option>Fan</option><option>Blower</option><option>Gearbox</option></select></div>
+<div><label>Coupling Type</label><select id="couplingType"><option>Disc Coupling</option><option>Gear Coupling</option><option>Grid Coupling</option><option>Spacer Coupling</option><option>Elastomeric Coupling</option><option>Flexible Element Coupling</option></select></div>
+<div><label>RPM</label><select id="rpm"><option>750</option><option>1000</option><option>1500</option><option>1800</option><option>3000</option><option>3600</option><option>6000</option><option value="custom">Custom</option></select></div>
+</div>
+<div class="g4">
+<div><label>Custom RPM</label><input type="number" id="customRpm" placeholder="Only if RPM = Custom"></div>
+<div><label>Unit</label><select id="unit"><option>mm</option><option>inch</option><option>mil</option></select></div>
+<div><label>Date</label><input id="date" type="date"></div>
+<div><label>Tolerance Source</label><select id="tolSource"><option value="standard">Standard Guideline</option><option value="custom">Custom Tolerance</option></select></div>
+</div>
+<div class="g">
+<div><label>Custom Offset Tolerance</label><input type="number" step="0.0001" id="customOffsetTol" placeholder="Same unit as readings"></div>
+<div><label>Custom Angularity Tolerance</label><input type="number" step="0.0001" id="customAngularTol" placeholder="Unit per 100 distance units"></div>
+</div>
+<div class="sm">Standard Guideline is a practical reference table based mainly on RPM, with conservative modifiers for critical equipment/couplings. For OEM or site-specific requirements, use Custom Tolerance.</div>
+</div>
+
+<div class="s">
+<div class="t">Reference Direction</div>
+<div class="sm">For ITP Rim & Face: looking from the fixed/stationary machine toward the movable machine, <b>9 o'clock is Right</b> and <b>3 o'clock is Left</b>.</div>
+<div class="diag"><svg viewBox="0 0 900 260"><defs><marker id="a" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#0b5cad"/></marker></defs><rect x="80" y="45" width="230" height="85" rx="12" fill="#e8f1fb" stroke="#0b5cad" stroke-width="2"/><text x="195" y="85" text-anchor="middle" font-size="18" font-weight="bold">Stationary / Fixed</text><rect x="590" y="45" width="230" height="85" rx="12" fill="#eee" stroke="#555" stroke-width="2"/><text x="705" y="85" text-anchor="middle" font-size="18" font-weight="bold">Movable</text><line x1="310" y1="88" x2="590" y2="88" stroke="#222" stroke-width="5"/><rect x="430" y="62" width="40" height="52" fill="#ddd" stroke="#222"/><rect x="470" y="62" width="40" height="52" fill="#ddd" stroke="#222"/><circle cx="190" cy="195" r="28" fill="#fff" stroke="#0b5cad" stroke-width="3"/><text x="190" y="202" text-anchor="middle">👷</text><line x1="225" y1="180" x2="640" y2="122" stroke="#0b5cad" stroke-width="3" marker-end="url(#a)"/><text x="430" y="205" text-anchor="middle" fill="#0b5cad" font-weight="bold">View from fixed machine toward movable</text><text x="605" y="205" font-weight="bold">9 = Right</text><text x="735" y="205" font-weight="bold">3 = Left</text></svg></div>
+</div>
+
+<div class="s">
+<div class="t">Reverse Dial Calculator</div>
+<div class="sm">
+<b>D1</b> = distance between Dial A and Dial B. <b>D2</b> = distance from Dial A to Front Feet. <b>D3</b> = distance from Dial A to Back Feet.
+D2 and D3 are measured from Dial A.
+</div>
+<div class="diag"><svg viewBox="0 0 1000 320"><defs><marker id="rdar" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#0b5cad"/></marker><marker id="rdarb" markerWidth="10" markerHeight="10" refX="1" refY="3" orient="auto"><path d="M8,0 L8,6 L0,3 z" fill="#0b5cad"/></marker></defs><rect x="60" y="55" width="220" height="80" rx="12" fill="#e8f1fb" stroke="#0b5cad"/><text x="170" y="100" text-anchor="middle" font-weight="bold">Stationary Machine</text><rect x="670" y="55" width="240" height="80" rx="12" fill="#eee" stroke="#555"/><text x="790" y="100" text-anchor="middle" font-weight="bold">Movable Machine</text><line x1="280" y1="95" x2="670" y2="95" stroke="#222" stroke-width="6"/><rect x="355" y="62" width="42" height="66" fill="#ddd" stroke="#222"/><rect x="445" y="62" width="42" height="66" fill="#ddd" stroke="#222"/><text x="376" y="48" text-anchor="middle" font-weight="bold">Dial A</text><text x="466" y="48" text-anchor="middle" font-weight="bold">Dial B</text><rect x="690" y="155" width="70" height="42" fill="#fff" stroke="#555"/><text x="725" y="220" text-anchor="middle" font-weight="bold">Front Feet</text><rect x="840" y="155" width="70" height="42" fill="#fff" stroke="#555"/><text x="875" y="220" text-anchor="middle" font-weight="bold">Back Feet</text><line x1="376" y1="245" x2="466" y2="245" stroke="#0b5cad" stroke-width="3" marker-start="url(#rdarb)" marker-end="url(#rdar)"/><text x="421" y="235" fill="#0b5cad" font-weight="bold">D1</text><line x1="376" y1="278" x2="725" y2="278" stroke="#d98c00" stroke-width="3" marker-start="url(#rdarb)" marker-end="url(#rdar)"/><text x="550" y="268" fill="#d98c00" font-weight="bold">D2</text><line x1="376" y1="310" x2="875" y2="310" stroke="#d98c00" stroke-width="3" marker-start="url(#rdarb)" marker-end="url(#rdar)"/><text x="625" y="300" fill="#d98c00" font-weight="bold">D3</text></svg></div>
+<div class="g"><div><label>Dial A Bottom</label><input type="number" step="0.0001" id="bottomA"></div><div><label>Dial B Bottom</label><input type="number" step="0.0001" id="bottomB"></div><div><label>Sag A Reading</label><input type="number" step="0.0001" id="sagA" value="0"></div><div><label>Sag B Reading</label><input type="number" step="0.0001" id="sagB" value="0"></div><div><label>Dial A Left</label><input type="number" step="0.0001" id="leftA"></div><div><label>Dial A Right</label><input type="number" step="0.0001" id="rightA"></div><div><label>Dial B Left</label><input type="number" step="0.0001" id="leftB"></div><div><label>Dial B Right</label><input type="number" step="0.0001" id="rightB"></div></div>
+<div class="g3"><div><label>D1</label><input type="number" step="0.0001" id="d1"></div><div><label>D2</label><input type="number" step="0.0001" id="d2"></div><div><label>D3</label><input type="number" step="0.0001" id="d3"></div></div>
+<button onclick="calcReverse()">Calculate Reverse Dial</button><button class="b2" onclick="tog('reverseSteps')">Show / Hide Steps</button>
+<div id="reverseResult" class="r"></div><div id="reverseTol" class="r"></div><div id="reverseSteps" class="steps"></div>
+</div>
+
+<div class="s">
+<div class="t">Rim & Face Calculator - Formula Method</div>
+<div class="sm">
+This section uses the Rim & Face formula method. The Rim indicator measures parallel/offset misalignment, and the Face indicator measures angular misalignment.
+<br><br>
+<b>A</b> = Face Dial Indicator travel diameter / hub face diameter used for the face reading.
+<br>
+<b>B</b> = distance from the Rim indicator plunger centerline to the movable machine front foot bolt center.
+<br>
+<b>C</b> = distance between the movable machine front foot bolt center and back foot bolt center.
+<br><br>
+For the back feet calculation, the total distance is <b>B + C</b>.
+<br>
+Formula: <b>FF = (F/A × B) + R/2</b>, <b>BF = (F/A × (B+C)) + R/2</b>.
+</div>
+<div class="diag">
+<svg viewBox="0 0 1000 390">
+<defs>
+<marker id="rfar" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#0b5cad"/></marker>
+<marker id="rfarb" markerWidth="10" markerHeight="10" refX="1" refY="3" orient="auto"><path d="M8,0 L8,6 L0,3 z" fill="#0b5cad"/></marker>
+</defs>
+<rect x="55" y="65" width="230" height="85" rx="12" fill="#e8f1fb" stroke="#0b5cad" stroke-width="2"/>
+<text x="170" y="105" text-anchor="middle" font-size="18" font-weight="bold">Stationary Machine</text>
+<rect x="650" y="65" width="250" height="85" rx="12" fill="#eee" stroke="#555" stroke-width="2"/>
+<text x="775" y="105" text-anchor="middle" font-size="18" font-weight="bold">Movable Machine</text>
+<line x1="285" y1="108" x2="650" y2="108" stroke="#222" stroke-width="6"/>
+<rect x="360" y="68" width="42" height="80" fill="#ddd" stroke="#222"/>
+<rect x="455" y="68" width="42" height="80" fill="#ddd" stroke="#222"/>
+<text x="381" y="54" text-anchor="middle" font-size="14" font-weight="bold">Face Dial</text>
+<text x="476" y="54" text-anchor="middle" font-size="14" font-weight="bold">Rim Dial</text>
+<rect x="670" y="172" width="75" height="45" rx="6" fill="#fff" stroke="#555"/>
+<text x="707" y="238" text-anchor="middle" font-size="14" font-weight="bold">Front Feet</text>
+<rect x="845" y="172" width="75" height="45" rx="6" fill="#fff" stroke="#555"/>
+<text x="882" y="238" text-anchor="middle" font-size="14" font-weight="bold">Back Feet</text>
+<circle cx="381" cy="108" r="60" fill="none" stroke="#d98c00" stroke-width="4"/>
+<line x1="381" y1="48" x2="381" y2="168" stroke="#d98c00" stroke-width="2"/>
+<text x="315" y="185" font-size="15" font-weight="bold" fill="#d98c00">A = Face Dial Travel Diameter</text>
+<line x1="476" y1="285" x2="707" y2="285" stroke="#0b5cad" stroke-width="3" marker-start="url(#rfarb)" marker-end="url(#rfar)"/>
+<text x="590" y="275" fill="#0b5cad" font-weight="bold">B</text>
+<line x1="707" y1="325" x2="882" y2="325" stroke="#0b5cad" stroke-width="3" marker-start="url(#rfarb)" marker-end="url(#rfar)"/>
+<text x="795" y="315" fill="#0b5cad" font-weight="bold">C</text>
+<line x1="476" y1="365" x2="882" y2="365" stroke="#d98c00" stroke-width="3" marker-start="url(#rfarb)" marker-end="url(#rfar)"/>
+<text x="679" y="355" fill="#d98c00" font-weight="bold">B + C for Back Feet</text>
+</svg>
+</div>
+<div class="sm">
+<b>Vertical readings:</b> Top is zero. Enter Face 6 o'clock and Rim 6 o'clock. Rim sag is applied to the vertical rim reading.
+<br>
+<b>Horizontal readings:</b> Enter Face 9 o'clock and Rim 9 o'clock according to the reference direction above.
+</div>
+<div class="g"><div><label>A - Face Dial Indicator Travel Diameter</label><input type="number" step="0.0001" id="rfA"></div><div><label>B - Rim Plunger Center to Front Foot Bolt Center</label><input type="number" step="0.0001" id="rfB"></div><div><label>C - Distance Between Front and Back Foot Bolt Centers</label><input type="number" step="0.0001" id="rfC"></div><div><label>Rim Bar Sag Reading</label><input type="number" step="0.0001" id="rfSag" value="0"></div></div>
+<div class="g"><div><label>Vertical F - Face Reading at 6 o'clock</label><input type="number" step="0.0001" id="rfFv"></div><div><label>Vertical R - Rim Reading at 6 o'clock</label><input type="number" step="0.0001" id="rfRv"></div><div><label>Horizontal F - Face Reading at 9 o'clock</label><input type="number" step="0.0001" id="rfFh"></div><div><label>Horizontal R - Rim Reading at 9 o'clock</label><input type="number" step="0.0001" id="rfRh"></div></div>
+<button onclick="calcRF()">Calculate Rim & Face</button><button class="b2" onclick="tog('rimFaceSteps')">Show / Hide Steps</button>
+<div id="rimFaceResult" class="r"></div><div id="rimFaceTol" class="r"></div><div id="rimFaceSteps" class="steps"></div>
+</div>
+
+<div class="s">
+<div class="t">Alignment Verification History</div>
+<div class="sm">After each correction and re-measurement, calculate again and press <b>Add Current Result to History</b>. Keep adding attempts until final PASS.</div>
+<div class="g"><button onclick="addAttempt()">Add Current Result to History</button><button class="bd" onclick="clearHistory()">Clear History</button></div>
+<div class="g"><button class="bp" onclick="generateReport()">Generate / Print Final Report with History</button><button class="b2" onclick="window.print()">Print Current Page</button></div>
+<div id="historyBox"></div>
+</div>
+
+<div class="foot">Designed by Mamdouh Alsharari — www.linkedin.com/in/mamdouh-alsharari-97a9362bb</div>
+</div>
+
+<script>
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&['s','u','c','p'].includes(e.key.toLowerCase()))e.preventDefault()});
+document.getElementById('date').valueAsDate=new Date();
+let lastReverse=null,lastRF=null,currentCalc=null,history=[];
+const gid=id=>document.getElementById(id);const g=id=>parseFloat(gid(id).value);const txt=id=>gid(id).value||'';const unit=()=>gid('unit').value;const fmt=n=>Number(n).toFixed(4).replace(/\.?0+$/,'');const absfmt=n=>Math.abs(Number(n)).toFixed(4).replace(/\.?0+$/,'');
+const vdirRev=n=>n>=0?'Add Shims':'Remove Shims'; const vdirRF=n=>n>=0?'Remove Shims':'Add Shims'; const hdirRF=n=>n>=0?'Move Right to Left':'Move Left to Right'; const hdirRev=n=>n>=0?'Move Right':'Move Left';
+function tog(id){let x=gid(id);x.style.display=x.style.display==='block'?'none':'block'}
+function pair(A,B,D1,D2,D3){let avg=(A+B)/2,half=A/2;return{avg,front:(avg*(D2/D1))-half,back:(avg*(D3/D1))-half}}
+function rpmVal(){return gid('rpm').value==='custom'?(parseFloat(gid('customRpm').value)||0):parseFloat(gid('rpm').value)}
+function unitFactorFromMM(){let u=unit(); if(u==='mm')return 1; if(u==='inch')return 1/25.4; if(u==='mil')return 39.3701; return 1}
+function standardTolMM(){
+ let rpm=rpmVal(), off=0.10, ang=0.10;
+ if(rpm>750&&rpm<=1800){off=0.07;ang=0.07}else if(rpm>1800&&rpm<=3000){off=0.05;ang=0.05}else if(rpm>3000&&rpm<=3600){off=0.03;ang=0.03}else if(rpm>3600){off=0.02;ang=0.02}
+ let eq=gid('equipType').value, cp=gid('couplingType').value, m=1;
+ if(['Gas Turbine','Steam Turbine','Compressor','Generator'].includes(eq))m*=0.75;
+ if(['Disc Coupling','Spacer Coupling'].includes(cp))m*=0.85;
+ if(['Gear Coupling','Grid Coupling','Elastomeric Coupling'].includes(cp))m*=1.10;
+ return {offset:off*m, angular:ang*m}
+}
+function getTol(){
+ if(gid('tolSource').value==='custom'){
+  return {offset:parseFloat(gid('customOffsetTol').value), angular:parseFloat(gid('customAngularTol').value), source:'Custom'}
+ }
+ let t=standardTolMM(), f=unitFactorFromMM();
+ return {offset:t.offset*f, angular:t.angular*f, source:'Standard Guideline'}
+}
+function evalTol(front,back,span){
+ let tol=getTol(), offset=Math.max(Math.abs(front),Math.abs(back));
+ let angular=span&&span!==0?Math.abs(back-front)/Math.abs(span)*100:0;
+ let offsetPass=offset<=tol.offset, angularPass=angular<=tol.angular, pass=offsetPass&&angularPass;
+ return {offset,angular,offsetTol:tol.offset,angularTol:tol.angular,offsetPass,angularPass,pass,source:tol.source,offsetExcess:Math.max(0,offset-tol.offset),angularExcess:Math.max(0,angular-tol.angular),offsetMargin:tol.offset-offset,angularMargin:tol.angular-angular}
+}
+function evalHTML(e,title){
+ let cls=e.pass?'pass':'fail', stat=e.pass?'PASS':'FAIL';
+ return `<div class="${cls}" style="margin-top:12px;padding:14px;border-radius:10px"><b>${title} Tolerance Status: ${stat}</b><br>
+ Tolerance Source: ${e.source}<br><br>
+ Offset: measured <b>${fmt(e.offset)}</b> / allowed <b>${fmt(e.offsetTol)}</b> ${unit()} → ${e.offsetPass?'PASS':'FAIL'}<br>
+ ${e.offsetPass?`Margin remaining: ${fmt(e.offsetMargin)} ${unit()}`:`Exceeds by: ${fmt(e.offsetExcess)} ${unit()}`}<br><br>
+ Angularity: measured <b>${fmt(e.angular)}</b> / allowed <b>${fmt(e.angularTol)}</b> ${unit()}/100 → ${e.angularPass?'PASS':'FAIL'}<br>
+ ${e.angularPass?`Margin remaining: ${fmt(e.angularMargin)} ${unit()}/100`:`Exceeds by: ${fmt(e.angularExcess)} ${unit()}/100`}<br>
+ </div>`
+}
+function calcReverse(){
+ let bottomA=g('bottomA'),bottomB=g('bottomB'),sagA=g('sagA'),sagB=g('sagB'),leftA=g('leftA'),rightA=g('rightA'),leftB=g('leftB'),rightB=g('rightB'),D1=g('d1'),D2=g('d2'),D3=g('d3'),res=gid('reverseResult'),st=gid('reverseSteps'),tolBox=gid('reverseTol');
+ if([bottomA,bottomB,sagA,sagB,leftA,rightA,leftB,rightB,D1,D2,D3].some(Number.isNaN)){res.style.display='block';res.innerHTML='⚠️ Please enter all Reverse Dial values.';return}
+ if(D1===0){res.style.display='block';res.innerHTML='⚠️ D1 cannot be zero.';return}
+ let BA=bottomA-sagA,BB=bottomB-sagB,RA=rightA-leftA,RB=rightB-leftB,V=pair(BA,BB,D1,D2,D3),H=pair(RA,RB,D1,D2,D3);
+ let span=Math.abs(D3-D2)||1, vEval=evalTol(V.front,V.back,span), hEval=evalTol(H.front,H.back,span);
+ lastReverse={BA,BB,RA,RB,V,H,vEval,hEval,span}; currentCalc={method:'Reverse Dial',vf:V.front,vb:V.back,hf:H.front,hb:H.back,vEval,hEval};
+ res.style.display='block';res.innerHTML=`<b>Reverse Dial Results (${unit()})</b><div class="rg"><div class="card"><div class="rt">Vertical</div>BA=${fmt(BA)} | BB=${fmt(BB)}<br>Front: <b>${absfmt(V.front)}</b> → ${vdirRev(V.front)}<br>Back: <b>${absfmt(V.back)}</b> → ${vdirRev(V.back)}<br>Raw FF=${fmt(V.front)}<br>Raw BF=${fmt(V.back)}</div><div class="card"><div class="rt">Horizontal</div>RA=${fmt(RA)} | RB=${fmt(RB)}<br>Front: <b>${absfmt(H.front)}</b> → ${hdirRev(H.front)}<br>Back: <b>${absfmt(H.back)}</b> → ${hdirRev(H.back)}<br>Raw FF=${fmt(H.front)}<br>Raw BF=${fmt(H.back)}</div></div>`;
+ tolBox.style.display='block'; tolBox.innerHTML=evalHTML(vEval,'Vertical')+evalHTML(hEval,'Horizontal');
+ st.innerHTML=`BA=${fmt(bottomA)}-(${fmt(sagA)})=${fmt(BA)}\nBB=${fmt(bottomB)}-(${fmt(sagB)})=${fmt(BB)}\nRA=${fmt(rightA)}-(${fmt(leftA)})=${fmt(RA)}\nRB=${fmt(rightB)}-(${fmt(leftB)})=${fmt(RB)}\n\nV FF=${fmt(V.front)}\nV BF=${fmt(V.back)}\nH FF=${fmt(H.front)}\nH BF=${fmt(H.back)}\n\nTolerance span used for angularity = |D3-D2| = ${fmt(span)}`;
+}
+function calcRF(){
+ let A=g('rfA'),B=g('rfB'),C=g('rfC'),sag=g('rfSag'),Fv=g('rfFv'),Rv=g('rfRv'),Fh=g('rfFh'),Rh=g('rfRh'),res=gid('rimFaceResult'),st=gid('rimFaceSteps'),tolBox=gid('rimFaceTol');
+ if([A,B,C,sag,Fv,Rv,Fh,Rh].some(Number.isNaN)){res.style.display='block';res.innerHTML='⚠️ Please enter all Rim & Face values.';return}
+ if(A===0){res.style.display='block';res.innerHTML='⚠️ A cannot be zero.';return}
+ let RvCorr=Rv-sag; let FFV=(Fv/A*B)+(RvCorr/2); let BFV=(Fv/A*(B+C))+(RvCorr/2); let FFH=(Fh/A*B)+(Rh/2); let BFH=(Fh/A*(B+C))+(Rh/2);
+ let span=Math.abs(C)||1, vEval=evalTol(FFV,BFV,span), hEval=evalTol(FFH,BFH,span);
+ lastRF={A,B,C,sag,Fv,Rv,RvCorr,Fh,Rh,FFV,BFV,FFH,BFH,vEval,hEval}; currentCalc={method:'Rim & Face',vf:FFV,vb:BFV,hf:FFH,hb:BFH,vEval,hEval};
+ res.style.display='block';res.innerHTML=`<b>Rim & Face Formula Results (${unit()})</b><div class="rg"><div class="card"><div class="rt">Vertical Movement</div>Corrected R=${fmt(RvCorr)}<br>Front Feet FFV: <b>${absfmt(FFV)}</b> → ${vdirRF(FFV)}<br>Back Feet BFV: <b>${absfmt(BFV)}</b> → ${vdirRF(BFV)}<br>Raw FFV=${fmt(FFV)}<br>Raw BFV=${fmt(BFV)}</div><div class="card"><div class="rt">Horizontal Movement</div>Front Feet FFH: <b>${absfmt(FFH)}</b> → ${hdirRF(FFH)}<br>Back Feet BFH: <b>${absfmt(BFH)}</b> → ${hdirRF(BFH)}<br>Raw FFH=${fmt(FFH)}<br>Raw BFH=${fmt(BFH)}</div></div>`;
+ tolBox.style.display='block'; tolBox.innerHTML=evalHTML(vEval,'Vertical')+evalHTML(hEval,'Horizontal');
+ st.innerHTML=`A=${fmt(A)} B=${fmt(B)} C=${fmt(C)}\nCorrected Vertical R = Rv - Sag = ${fmt(Rv)} - (${fmt(sag)}) = ${fmt(RvCorr)}\n\nFFV = (Fv/A × B) + RvCorr/2 = ${fmt(FFV)}\nBFV = (Fv/A × (B+C)) + RvCorr/2 = ${fmt(BFV)}\n\nFFH = (Fh/A × B) + Rh/2 = ${fmt(FFH)}\nBFH = (Fh/A × (B+C)) + Rh/2 = ${fmt(BFH)}\n\nTolerance span used for angularity = C = ${fmt(span)}`;
+}
+function addAttempt(){
+ if(!currentCalc){alert('Please calculate first.');return}
+ history.push({...currentCalc, attempt:history.length+1, date:new Date().toLocaleString()});
+ renderHistory();
+}
+function clearHistory(){history=[];renderHistory()}
+function pctImprovement(initial,final){if(Math.abs(initial)<0.0000001)return 0;return (1-Math.abs(final)/Math.abs(initial))*100}
+function renderHistory(){
+ let box=gid('historyBox');
+ if(history.length===0){box.innerHTML='<div class="sm">No attempts saved yet.</div>';return}
+ let rows=history.map(h=>`<tr><td>${h.attempt}</td><td>${h.method}</td><td>${h.vEval.pass&&h.hEval.pass?'PASS':'FAIL'}</td><td>${fmt(h.vEval.offset)}</td><td>${fmt(h.vEval.angular)}</td><td>${fmt(h.hEval.offset)}</td><td>${fmt(h.hEval.angular)}</td><td>${h.date}</td></tr>`).join('');
+ let first=history[0], last=history[history.length-1];
+ let impV=pctImprovement(first.vEval.offset,last.vEval.offset), impH=pctImprovement(first.hEval.offset,last.hEval.offset);
+ box.innerHTML=`<table><tr><th>Attempt</th><th>Method</th><th>Status</th><th>V Offset</th><th>V Angular</th><th>H Offset</th><th>H Angular</th><th>Time</th></tr>${rows}</table>
+ <div class="n" style="margin-top:12px"><b>Improvement:</b><br>Vertical offset improvement: ${fmt(impV)}%<br>Horizontal offset improvement: ${fmt(impH)}%<br>Final status: <b>${last.vEval.pass&&last.hEval.pass?'PASS':'FAIL'}</b></div>`;
+}
+function corr(v,method,axis){if(method==='Rim & Face'&&axis==='V')return `${absfmt(v)} ${vdirRF(v)}`; if(method==='Rim & Face'&&axis==='H')return `${absfmt(v)} ${hdirRF(v)}`; if(axis==='V')return `${absfmt(v)} ${vdirRev(v)}`; return `${absfmt(v)} ${hdirRev(v)}`}
+function bars(vf,vb,hf,hb){let vals=[vf,vb,hf,hb],mx=Math.max(...vals.map(x=>Math.abs(x)),.0001),labs=['V Front','V Back','H Front','H Back'];return `<svg viewBox="0 0 760 250"><line x1="360" y1="20" x2="360" y2="230" stroke="#333"/><text x="360" y="15" text-anchor="middle">Zero target after correction</text>${vals.map((v,i)=>{let w=Math.abs(v)/mx*285,y=45+i*45,x=v>=0?360:360-w;return `<text x="20" y="${y+18}">${labs[i]}</text><rect x="${x}" y="${y}" width="${w}" height="26" rx="5" fill="${i<2?'#0b5cad':'#d98c00'}"/><text x="660" y="${y+18}">${v>=0?'+':''}${fmt(v)}</text>`}).join('')}</svg>`}
+function generateReport(){
+ if(history.length===0&&!lastReverse&&!lastRF){alert('Please calculate and/or add attempts first.');return}
+ let h=`<html><head><title>Alignment Report with History</title><style>body{font-family:Arial;margin:30px;color:#222}h1{text-align:center;margin:0}.sub{text-align:center;color:#555}.box{border:1px solid #ddd;border-radius:10px;padding:14px;margin-top:14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ddd;padding:8px;text-align:left}.pass{color:#08783f;font-weight:bold}.fail{color:#b00020;font-weight:bold}.foot{text-align:center;color:#555;margin-top:18px;font-size:12px}@media print{button{display:none}}</style></head><body><button onclick="window.print()">Print / Save as PDF</button><h1>Alignment Report</h1><div class="sub">Designed by Mamdouh Alsharari</div><div class="box"><div class="grid"><div><b>Equipment:</b> ${txt('equipTag')||'-'}</div><div><b>Technician:</b> ${txt('technician')||'-'}</div><div><b>Site:</b> ${txt('site')||'-'}</div><div><b>Date:</b> ${txt('date')||'-'}</div><div><b>Equipment Type:</b> ${txt('equipType')}</div><div><b>Coupling Type:</b> ${txt('couplingType')}</div><div><b>RPM:</b> ${rpmVal()}</div><div><b>Unit:</b> ${unit()}</div><div><b>Tolerance Source:</b> ${getTol().source}</div><div><b>Target:</b> Zero misalignment after correction</div></div></div>`;
+ if(history.length>0){
+  let rows=history.map(a=>`<tr><td>${a.attempt}</td><td>${a.method}</td><td class="${a.vEval.pass&&a.hEval.pass?'pass':'fail'}">${a.vEval.pass&&a.hEval.pass?'PASS':'FAIL'}</td><td>${fmt(a.vEval.offset)}</td><td>${fmt(a.vEval.angular)}</td><td>${fmt(a.hEval.offset)}</td><td>${fmt(a.hEval.angular)}</td><td>${corr(a.vf,a.method,'V')}</td><td>${corr(a.vb,a.method,'V')}</td><td>${corr(a.hf,a.method,'H')}</td><td>${corr(a.hb,a.method,'H')}</td></tr>`).join('');
+  let final=history[history.length-1], first=history[0];
+  h+=`<div class="box"><h2>Complete Alignment History Until PASS / Final Verification</h2><table><tr><th>Attempt</th><th>Method</th><th>Status</th><th>V Offset</th><th>V Angular</th><th>H Offset</th><th>H Angular</th><th>V Front</th><th>V Back</th><th>H Front</th><th>H Back</th></tr>${rows}</table><h3>Final Acceptance</h3><p>Final status: <span class="${final.vEval.pass&&final.hEval.pass?'pass':'fail'}">${final.vEval.pass&&final.hEval.pass?'PASS':'FAIL'}</span></p><p>Vertical offset improvement: ${fmt(pctImprovement(first.vEval.offset,final.vEval.offset))}%<br>Horizontal offset improvement: ${fmt(pctImprovement(first.hEval.offset,final.hEval.offset))}%</p><h3>Final Deviation Chart</h3>${bars(final.vf,final.vb,final.hf,final.hb)}</div>`;
+ } else if(currentCalc){
+  h+=`<div class="box"><h2>Current Calculation</h2>${bars(currentCalc.vf,currentCalc.vb,currentCalc.hf,currentCalc.hb)}</div>`;
+ }
+ h+=`<div class="foot">Designed by Mamdouh Alsharari | www.linkedin.com/in/mamdouh-alsharari-97a9362bb</div><button onclick="window.print()">Print / Save as PDF</button></body></html>`;
+ let w=window.open('','_blank');w.document.write(h);w.document.close();
+}
+renderHistory();
+</script>
+</body>
+</html>
