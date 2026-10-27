@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Alignment Calculator Pro v12</title>
+<title>Alignment Calculator Pro v16</title>
 <style>
 body{font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;margin:0;padding:18px;color:#222;user-select:none}
 .c{max-width:1240px;margin:auto;background:#fff;padding:22px;border-radius:16px;box-shadow:0 4px 18px #0002}
@@ -73,7 +73,7 @@ D2 and D3 are measured from Dial A.
 </div>
 
 <div class="s">
-<div class="t">Rim & Face Calculator - Formula Method</div>
+<div class="t">Rim & Face Calculator - Formula Method</div><div class="n"><b>Measurement setup:</b> Stand behind the movable MOTOR facing the stationary PUMP. Both indicators are fixed to the motor shaft, tips touch the pump hub. Vertical: zero at 12 o'clock and rotate to 6. Horizontal: zero at 3 and rotate to 9. Read and enter signed readings. 9 o'clock is LEFT from behind motor. A=D: full face dial travel diameter. B=X: rim contact to FRONT motor foot. C=Y: rim contact directly to BACK motor foot (NOT distance between feet). Feet spacing = C−B. Sample A=10, B=12, C=24, sag=-2, face6=+6, rim6=-17, face9=-5, rim9=+8.</div>
 <div class="sm">
 This section uses the Rim & Face formula method. The Rim indicator measures parallel/offset misalignment, and the Face indicator measures angular misalignment.
 <br><br>
@@ -85,7 +85,7 @@ This section uses the Rim & Face formula method. The Rim indicator measures para
 <br><br>
 For the back feet calculation, the total distance is <b>B + C</b>.
 <br>
-Formula: <b>FF = (F/A × B) + R/2</b>, <b>BF = (F/A × (B+C)) + R/2</b>.
+Formula: <b>FF = (F/A × B) + R/2</b>, <b>BF = (F/A × (C)) + R/2</b>.
 </div>
 <div class="diag">
 <svg viewBox="0 0 1000 390">
@@ -122,7 +122,7 @@ Formula: <b>FF = (F/A × B) + R/2</b>, <b>BF = (F/A × (B+C)) + R/2</b>.
 <br>
 <b>Horizontal readings:</b> Enter Face 9 o'clock and Rim 9 o'clock according to the reference direction above.
 </div>
-<div class="g"><div><label>A - Face Dial Indicator Travel Diameter</label><input type="number" step="0.0001" id="rfA"></div><div><label>B - Rim Plunger Center to Front Foot Bolt Center</label><input type="number" step="0.0001" id="rfB"></div><div><label>C - Distance Between Front and Back Foot Bolt Centers</label><input type="number" step="0.0001" id="rfC"></div><div><label>Rim Bar Sag Reading</label><input type="number" step="0.0001" id="rfSag" value="0"></div></div>
+<div class="g"><div><label>A - Face Dial Indicator Travel Diameter</label><input type="number" step="0.0001" id="rfA"></div><div><label>B - Rim Plunger Center to Front Foot Bolt Center</label><input type="number" step="0.0001" id="rfB"></div><div><label>C = Y - Rim contact to Back Motor Foot (full distance)</label><input type="number" step="0.0001" id="rfC"></div><div><label>Rim Bar Sag Reading</label><input type="number" step="0.0001" id="rfSag" value="0"></div></div>
 <div class="g"><div><label>Vertical F - Face Reading at 6 o'clock</label><input type="number" step="0.0001" id="rfFv"></div><div><label>Vertical R - Rim Reading at 6 o'clock</label><input type="number" step="0.0001" id="rfRv"></div><div><label>Horizontal F - Face Reading at 9 o'clock</label><input type="number" step="0.0001" id="rfFh"></div><div><label>Horizontal R - Rim Reading at 9 o'clock</label><input type="number" step="0.0001" id="rfRh"></div></div>
 <button onclick="calcRF()">Calculate Rim & Face</button><button class="b2" onclick="tog('rimFaceSteps')">Show / Hide Steps</button>
 <div id="rimFaceResult" class="r"></div><div id="rimFaceTol" class="r"></div><div id="rimFaceSteps" class="steps"></div>
@@ -145,7 +145,7 @@ document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&['s','u','c',
 document.getElementById('date').valueAsDate=new Date();
 let lastReverse=null,lastRF=null,currentCalc=null,history=[];
 const gid=id=>document.getElementById(id);const g=id=>parseFloat(gid(id).value);const txt=id=>gid(id).value||'';const unit=()=>gid('unit').value;const fmt=n=>Number(n).toFixed(4).replace(/\.?0+$/,'');const absfmt=n=>Math.abs(Number(n)).toFixed(4).replace(/\.?0+$/,'');
-const vdirRev=n=>n>=0?'Add Shims':'Remove Shims'; const vdirRF=n=>n>=0?'Remove Shims':'Add Shims'; const hdirRF=n=>n>=0?'Move Right to Left':'Move Left to Right'; const hdirRev=n=>n>=0?'Move Right':'Move Left';
+const vdirRev=n=>n>=0?'Add Shims':'Remove Shims'; const vdirRF=n=>n>=0?'Add Shims':'Remove Shims'; const hdirRF=n=>n>=0?'Move Right (3 o’clock)':'Move Left (9 o’clock)'; const hdirRev=n=>n>=0?'Move Right':'Move Left';
 function tog(id){let x=gid(id);x.style.display=x.style.display==='block'?'none':'block'}
 function pair(A,B,D1,D2,D3){let avg=(A+B)/2,half=A/2;return{avg,front:(avg*(D2/D1))-half,back:(avg*(D3/D1))-half}}
 function rpmVal(){return gid('rpm').value==='custom'?(parseFloat(gid('customRpm').value)||0):parseFloat(gid('rpm').value)}
@@ -197,12 +197,12 @@ function calcRF(){
  let A=g('rfA'),B=g('rfB'),C=g('rfC'),sag=g('rfSag'),Fv=g('rfFv'),Rv=g('rfRv'),Fh=g('rfFh'),Rh=g('rfRh'),res=gid('rimFaceResult'),st=gid('rimFaceSteps'),tolBox=gid('rimFaceTol');
  if([A,B,C,sag,Fv,Rv,Fh,Rh].some(Number.isNaN)){res.style.display='block';res.innerHTML='⚠️ Please enter all Rim & Face values.';return}
  if(A===0){res.style.display='block';res.innerHTML='⚠️ A cannot be zero.';return}
- let RvCorr=Rv-sag; let FFV=(Fv/A*B)+(RvCorr/2); let BFV=(Fv/A*(B+C))+(RvCorr/2); let FFH=(Fh/A*B)+(Rh/2); let BFH=(Fh/A*(B+C))+(Rh/2);
+ let RvCorr=Rv-sag; let FFV=(Fv/A*B)-(RvCorr/2); let BFV=(Fv/A*C)-(RvCorr/2); let FFH=(Fh/A*B)-(Rh/2); let BFH=(Fh/A*C)-(Rh/2);
  let span=Math.abs(C)||1, vEval=evalTol(FFV,BFV,span), hEval=evalTol(FFH,BFH,span);
  lastRF={A,B,C,sag,Fv,Rv,RvCorr,Fh,Rh,FFV,BFV,FFH,BFH,vEval,hEval}; currentCalc={method:'Rim & Face',vf:FFV,vb:BFV,hf:FFH,hb:BFH,vEval,hEval};
  res.style.display='block';res.innerHTML=`<b>Rim & Face Formula Results (${unit()})</b><div class="rg"><div class="card"><div class="rt">Vertical Movement</div>Corrected R=${fmt(RvCorr)}<br>Front Feet FFV: <b>${absfmt(FFV)}</b> → ${vdirRF(FFV)}<br>Back Feet BFV: <b>${absfmt(BFV)}</b> → ${vdirRF(BFV)}<br>Raw FFV=${fmt(FFV)}<br>Raw BFV=${fmt(BFV)}</div><div class="card"><div class="rt">Horizontal Movement</div>Front Feet FFH: <b>${absfmt(FFH)}</b> → ${hdirRF(FFH)}<br>Back Feet BFH: <b>${absfmt(BFH)}</b> → ${hdirRF(BFH)}<br>Raw FFH=${fmt(FFH)}<br>Raw BFH=${fmt(BFH)}</div></div>`;
  tolBox.style.display='block'; tolBox.innerHTML=evalHTML(vEval,'Vertical')+evalHTML(hEval,'Horizontal');
- st.innerHTML=`A=${fmt(A)} B=${fmt(B)} C=${fmt(C)}\nCorrected Vertical R = Rv - Sag = ${fmt(Rv)} - (${fmt(sag)}) = ${fmt(RvCorr)}\n\nFFV = (Fv/A × B) + RvCorr/2 = ${fmt(FFV)}\nBFV = (Fv/A × (B+C)) + RvCorr/2 = ${fmt(BFV)}\n\nFFH = (Fh/A × B) + Rh/2 = ${fmt(FFH)}\nBFH = (Fh/A × (B+C)) + Rh/2 = ${fmt(BFH)}\n\nTolerance span used for angularity = C = ${fmt(span)}`;
+ st.innerHTML=`A=${fmt(A)} B=${fmt(B)} C=${fmt(C)}\nCorrected Vertical R = Rv - Sag = ${fmt(Rv)} - (${fmt(sag)}) = ${fmt(RvCorr)}\n\nFFV = (Fv/A × B) + RvCorr/2 = ${fmt(FFV)}\nBFV = (Fv/A × (C)) + RvCorr/2 = ${fmt(BFV)}\n\nFFH = (Fh/A × B) + Rh/2 = ${fmt(FFH)}\nBFH = (Fh/A × (C)) + Rh/2 = ${fmt(BFH)}\n\nTolerance span used for angularity = C = ${fmt(span)}`;
 }
 function addAttempt(){
  if(!currentCalc){alert('Please calculate first.');return}
