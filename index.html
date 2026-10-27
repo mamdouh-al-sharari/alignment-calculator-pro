@@ -117,7 +117,7 @@ document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&['s','u','c',
 document.getElementById('date').valueAsDate=new Date();
 let lastReverse=null,lastRF=null,currentCalc=null,history=[];
 const gid=id=>document.getElementById(id);const g=id=>parseFloat(gid(id).value);const txt=id=>gid(id).value||'';const unit=()=>gid('unit').value;const distanceUnit=()=>unit()==='mil'?'inch':'cm';function updateUnitLabels(){document.querySelectorAll(".dimensionUnit").forEach(e=>e.textContent=distanceUnit());document.querySelectorAll(".readingUnit").forEach(e=>e.textContent=unit());}gid("unit").addEventListener("change",()=>{updateUnitLabels();gid("reverseResult").style.display="none";gid("rimFaceResult").style.display="none";gid("reverseTol").style.display="none";gid("rimFaceTol").style.display="none";currentCalc=null;lastReverse=null;lastRF=null;});updateUnitLabels();const fmt=n=>Number(n).toFixed(4).replace(/\.?0+$/,'');const absfmt=n=>Math.abs(Number(n)).toFixed(4).replace(/\.?0+$/,'');
-const vdirRev=n=>n>=0?'Add Shims':'Remove Shims'; const vdirRF=n=>n>=0?'Add Shims':'Remove Shims'; const hdirRF=n=>n>=0?'Move Right (3 o’clock)':'Move Left (9 o’clock)'; const hdirRev=n=>n>=0?'Move Right':'Move Left';
+const vdirRev=n=>n>=0?'Add Shims':'Remove Shims'; const vdirRF=n=>n>=0?'Add Shims':'Remove Shims'; const hdirRF=n=>n>=0?'Move Right (3 o’clock)':'Move Left (9 o’clock)'; const hdirRev=n=>n>=0?'Move Left (9 o’clock)':'Move Right (3 o’clock)';
 function tog(id){let x=gid(id);x.style.display=x.style.display==='block'?'none':'block'}
 function pair(A,B,D1,D2,D3){let avg=(A+B)/2,half=A/2;return{avg,front:(avg*(D2/D1))-half,back:(avg*(D3/D1))-half}}
 function rpmVal(){return gid('rpm').value==='custom'?(parseFloat(gid('customRpm').value)||0):parseFloat(gid('rpm').value)}
@@ -158,12 +158,12 @@ function calcReverse(){
  let bottomA=g('bottomA'),bottomB=g('bottomB'),sagA=g('sagA'),sagB=g('sagB'),leftA=g('leftA'),rightA=0,leftB=0,rightB=g('rightB'),D1=g('d1'),D2=g('d2'),D3=g('d3'),res=gid('reverseResult'),st=gid('reverseSteps'),tolBox=gid('reverseTol');
  if([bottomA,bottomB,sagA,sagB,leftA,rightA,leftB,rightB,D1,D2,D3].some(Number.isNaN)){res.style.display='block';res.innerHTML='⚠️ Please enter all Reverse Dial values.';return}
  if(D1===0){res.style.display='block';res.innerHTML='⚠️ D1 cannot be zero.';return}
- let BA=bottomA-sagA,BB=-bottomB-sagB,RA=rightA-leftA,RB=rightB-leftB,V=pair(BA,BB,D1,D2,D3),H=pair(RA,RB,D1,D2,D3);
+ let BA=bottomA/2-sagA,BB=bottomB/2-sagB,RA=rightA-leftA,RB=rightB-leftB,V={front:-(BA+(BB-BA)*D2/D1),back:-(BA+(BB-BA)*D3/D1)},H=pair(RA,RB,D1,D2,D3);
  let span=Math.abs(D3-D2)||1, vEval=evalTol(V.front,V.back,span), hEval=evalTol(H.front,H.back,span);
  lastReverse={BA,BB,RA,RB,V,H,vEval,hEval,span}; currentCalc={method:'Reverse Dial',vf:V.front,vb:V.back,hf:H.front,hb:H.back,vEval,hEval};
  res.style.display='block';res.innerHTML=`<b>Reverse Dial Results (${unit()})</b><div class="rg"><div class="card"><div class="rt">Vertical</div>BA=${fmt(BA)} | BB=${fmt(BB)}<br>Front: <b>${absfmt(V.front)} ${unit()}</b> → ${vdirRev(V.front)}<br>Back: <b>${absfmt(V.back)} ${unit()}</b> → ${vdirRev(V.back)}<br>Raw FF=${fmt(V.front)}<br>Raw BF=${fmt(V.back)}</div><div class="card"><div class="rt">Horizontal</div>RA=${fmt(RA)} | RB=${fmt(RB)}<br>Front: <b>${absfmt(H.front)} ${unit()}</b> → ${hdirRev(H.front)}<br>Back: <b>${absfmt(H.back)} ${unit()}</b> → ${hdirRev(H.back)}<br>Raw FF=${fmt(H.front)}<br>Raw BF=${fmt(H.back)}</div></div>`;
  tolBox.style.display='block'; tolBox.innerHTML=evalHTML(vEval,'Vertical')+evalHTML(hEval,'Horizontal');
- st.innerHTML=`BA=${fmt(bottomA)}-(${fmt(sagA)})=${fmt(BA)}\nBB=${fmt(bottomB)}-(${fmt(sagB)})=${fmt(BB)}\nRA=${fmt(rightA)}-(${fmt(leftA)})=${fmt(RA)}\nRB=${fmt(rightB)}-(${fmt(leftB)})=${fmt(RB)}\n\nV FF=${fmt(V.front)}\nV BF=${fmt(V.back)}\nH FF=${fmt(H.front)}\nH BF=${fmt(H.back)}\n\nTolerance span used for angularity = |D3-D2| = ${fmt(span)}`;
+ st.innerHTML=`BA=${fmt(bottomA)}/2-(${fmt(sagA)})=${fmt(BA)}\nBB=${fmt(bottomB)}/2-(${fmt(sagB)})=${fmt(BB)}\nRA=${fmt(rightA)}-(${fmt(leftA)})=${fmt(RA)}\nRB=${fmt(rightB)}-(${fmt(leftB)})=${fmt(RB)}\n\nV FF=${fmt(V.front)}\nV BF=${fmt(V.back)}\nH FF=${fmt(H.front)}\nH BF=${fmt(H.back)}\n\nTolerance span used for angularity = |D3-D2| = ${fmt(span)}`;
 }
 function calcRF(){
  let D=g('rfA'),X=g('rfB'),Y=g('rfC'),sag=g('rfSag'),Fv=g('rfFv'),Rv=g('rfRv'),Fh=g('rfFh'),Rh=g('rfRh'),res=gid('rimFaceResult'),st=gid('rimFaceSteps'),tolBox=gid('rimFaceTol');
